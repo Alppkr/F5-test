@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-bigip-ctlr-f5-1-deployment
+  namespace: kube-system
+spec:
+# DO NOT INCREASE REPLICA COUNT
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8s-bigip-ctlr-f5-1-deployment
+  template:
+    metadata:
+      labels:
+        app: k8s-bigip-ctlr-f5-1-deployment
+    spec:
+      # Name of the Service Account bound to a Cluster Role with the required
+      # permissions
+      containers:
+        - name: k8s-bigip-ctlr
+          image: "f5networks/k8s-bigip-ctlr:latest"
+          env:
+            - name: BIGIP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                # Replace with the name of the Secret containing your login
+                # credentials
+                  name: f5-bigip-ctlr-login
+                  key: username
+            - name: BIGIP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                # Replace with the name of the Secret containing your login
+                # credentials
+                  name: f5-bigip-ctlr-login
+                  key: password
+          command: ["/app/bin/k8s-bigip-ctlr"]
+          args: [
+            # See the k8s-bigip-ctlr documentation for information about
+            # all config options
+            # When insecure=true, this enables insecure SSL communication to the BIG-IP system."
+            # https://clouddocs.f5.com/containers/latest/
+            "--bigip-username=$(BIGIP_USERNAME)",
+            "--bigip-password=$(BIGIP_PASSWORD)",
+            "--bigip-url=10.30.1.155:8443",
+            "--bigip-partition=K8s",
+            "--pool-member-type=cluster",
+            "--insecure",
+            "--ingress-class=f5-1"
+            ]
+      serviceAccountName: bigip-ctlr

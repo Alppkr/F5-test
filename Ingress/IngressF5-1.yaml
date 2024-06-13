@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example-ingress-f5-1
+  annotations:
+      virtual-server.f5.com/ip: "10.30.1.155"
+      virtual-server.f5.com/partition: "K8s"
+      virtual-server.f5.com/balance: "round-robin"
+      virtual-server.f5.com/https-port: "443"
+      virtual-server.f5.com/health: |
+        [
+          {
+            "path":     "/",
+            "send":     "HTTP GET /",
+            "interval": 5,
+            "timeout":  10
+          }
+        ]
+      virtual-server.f5.com/clientssl: '[{"bigIpProfile": "/Common/clientssl"}]'
+      ingress.kubernetes.io/allow-http: "false"
+      ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: f5-1
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          service:
+            name: foo-service
+            port:
+              number: 80
+        pathType: Prefix
