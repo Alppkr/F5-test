@@ -14,6 +14,7 @@ These are the mandatory requirements for deploying CIS:
 Then we need to move CISInstallCommon folder and edit F5password.yaml we need to set base64encoded username and password for new created partition and install serviceaccount.yaml and F5password.yaml
 
 We will move to CISInstall folder. There are two CISF5* yaml to for different F5. I will mention configuration parameters below:
+
     "--bigip-username=$(BIGIP_USERNAME)" #username for the big ip system. we have already created with F5password.yaml
     "--bigip-password=$(BIGIP_PASSWORD)", #password for the big ip system. we have already created with F5password.yaml
     "--bigip-url=10.30.1.155:8443", #internal management url for bigip
@@ -28,6 +29,7 @@ We will move to CISInstall folder. There are two CISF5* yaml to for different F5
 After you completed necessary changes in the yaml files and created new namespaces for CRDs(F5-CIS-1,F5-CIS-2) . CISF5* should be deployed. Then, CRD.yaml must be deployed.
 
 Now we will move to IPAMInstall folder. There are three yaml file. F5-ipam-rbac.yaml file must be deployed first. No need to install F5-ipam-persistentvolume.yaml for EKS in dynamic provisioning mode but I put it here if you need somehow. At least, we will deploy F5-ipam-deployment.yaml but you need to set ip ranges which will be used to create virtualservers. At the beginning, IP address can be assigned to respected NICs in AWS for BIGIPs then this IP address can use below configuration parameter.
+
     --ip-range='{"f5-1":"10.192.75.113-10.192.75.116","f5-2":"10.192.125.30-10.192.125.50"}' # different labels must be created for different f5 subnets
 
 After all the installation completed, we can move to deploy example application.
@@ -35,6 +37,7 @@ After all the installation completed, we can move to deploy example application.
 First we need to label namespace which we will use to deploy application(you can label default namespace).
 Then we will move virtualserver folder and deploy deployment.yaml
 Now, we deploy f5-virtualserver* yaml files. It will create virtualServer in their own namespaces. You can check the configuration details below.
+
     apiVersion: "cis.f5.com/v1"
     kind: VirtualServer
     metadata:
