@@ -45,7 +45,10 @@ spec:
             "--bigip-url=10.30.1.155:8443",
             "--bigip-partition=K8s",
             "--pool-member-type=cluster",
+            "--custom-resource-mode=true", # When true ConfigMaps, Routes, and Ingress are not processed by CIS.
             "--insecure",
-            "--ingress-class=f5-1"
+            "--ipam=true", # use to enable IPAM
+            "--namespace=F5-CIS-1", #Namespace name which crd are created in for first F5
+            "--namespace-label=apps", #Namespace label which appllication deployed namespaces should be label (only application namespaces label with this label not F5 namespaces)
             ]
       serviceAccountName: bigip-ctlr
